@@ -13,26 +13,21 @@ import {
 import api from './services/api';
 
 export default function App() {
-  const [repos, setRepos] = useState([]);
+  const [repositories, setRepositories] = useState([]);
 
   useEffect(() => {
     api.get('repositories').then(response => {
-      setRepos(response.data);
+      setRepositories(response.data);
     });
-  })
+  }, []);
 
   async function handleLikeRepository(id) {
     // Implement "Like Repository" functionality
-    try {
-      const response = await api.post(`repositories/${id}/like`);
+    const response = await api.post(`repositories/${id}/like`);
 
-      setRepos(prevState => {
-        return prevState.map(repo => repo.id === id ? response.data : repo);
-      })
-
-    } catch(err) {
-      console.log(err);
-    }
+    setRepositories(prevState => {
+      return prevState.map(repository => repository.id === id ? response.data : repository);
+    })
   }
 
   return (
@@ -40,7 +35,7 @@ export default function App() {
       <StatusBar barStyle="light-content" backgroundColor="#7159c1" />
       <SafeAreaView style={styles.container}>
         <FlatList 
-          data={repos}
+          data={repositories}
           keyExtractor={repository => repository.id}
           renderItem={({ item: repository }) => (
             <View style={styles.repositoryContainer}>
